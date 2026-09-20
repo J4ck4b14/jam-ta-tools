@@ -1,0 +1,8 @@
+{
+  "name": "Jam.TATools.UnityBridge.Editor",
+  "rootNamespace": "JamTATools.Editor",
+  "includePlatforms": [
+    "Editor"
+  ],
+  "autoReferenced": true
+}

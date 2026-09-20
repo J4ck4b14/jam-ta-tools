@@ -1,0 +1,10 @@
+{
+  "name": "com.jam.ta-tools",
+  "version": "2.4.0",
+  "displayName": "JAM TA Tools - Unity Bridge",
+  "description": "Unity import verification bridge for JAM TA Tools sidecars, including Asset Set-aware render and texture metrics.",
+  "unity": "6000.0",
+  "author": {
+    "name": "Juan Abia Merino"
+  }
+}

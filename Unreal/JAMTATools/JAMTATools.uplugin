@@ -1,0 +1,24 @@
+{
+  "FileVersion": 3,
+  "Version": 240,
+  "VersionName": "2.4.0",
+  "FriendlyName": "JAM TA Tools - Unreal Bridge",
+  "Description": "Editor-side validation bridge for JAM TA Tools sidecars.",
+  "Category": "Editor",
+  "CreatedBy": "Juan Abia Merino",
+  "CanContainContent": false,
+  "IsBetaVersion": true,
+  "Modules": [
+    {
+      "Name": "JAMTATools",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "DataValidation",
+      "Enabled": true
+    }
+  ]
+}

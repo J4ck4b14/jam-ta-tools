@@ -1,0 +1,25 @@
+schema_version = "1.0.0"
+
+id = "jam_ta_tools"
+version = "2.4.0"
+name = "JAM TA Tools"
+tagline = "Profile-aware game asset validation and technical art utilities"
+maintainer = "Juan Abia Merino"
+type = "add-on"
+
+blender_version_min = "4.2.0"
+
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
+
+[permissions]
+files = "Read and write asset reports, settings and exported game assets"
+
+[build]
+paths_exclude_pattern = [
+  "__pycache__/",
+  "*.pyc",
+  ".git/",
+  "*.zip",
+]

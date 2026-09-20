@@ -1,0 +1,24 @@
+{
+  "profiles": {
+    "PROJECT_PROP": {
+      "label": "Project Prop",
+      "description": "Example studio prop profile layered on JAM's shared rules.",
+      "asset_role": "static",
+      "max_material_slots": 3,
+      "max_texture_dimension": 2048,
+      "max_textures_per_material": 5,
+      "texture_memory_budget_mb": 64.0,
+      "prefer_mask_packing": true,
+      "audit_lightmap_uv": true,
+      "lightmap_uv_channel": 1,
+      "missing_lightmap_uv_severity": "WARNING",
+      "lightmap_overlap_severity": "ERROR",
+      "min_lightmap_padding_px": 6.0,
+      "lightmap_padding_severity": "WARNING",
+      "uv_overlap_severity": "INFO",
+      "modular_grid_cm": 50.0,
+      "modular_grid_tolerance_cm": 0.1,
+      "modular_check_position": false
+    }
+  }
+}
