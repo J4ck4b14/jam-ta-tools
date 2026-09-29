@@ -1,114 +1,185 @@
 # JAM TA Tools
 
-A cross-DCC technical art toolkit for game-asset workflows, with matched
-feature sets for **Maya** (Python / OpenMaya 2.0) and **Blender** (bpy addon).
-Built and maintained by Juan Abia Merino.
+JAM TA Tools is a technical-art toolkit for game-asset validation, authoring and export across **Maya** and **Blender**, with verification bridges for **Unity** and **Unreal Engine**.
 
-Each version is a single self-contained file implemented with that DCC's
-native idioms — `cmds`/OpenMaya UI and undo chunking in Maya; operators,
-panels, properties and drivers in Blender.
+The DCC tools share a host-independent Python core for profiles, reporting, mesh and UV analysis, Asset Sets, export planning and `.jammeta.json` sidecars. Maya and Blender handle scene-specific work with their native APIs, while the engine bridges compare the exported expectations with the asset that was actually imported.
 
-```
+Built and maintained by **Juan Abia Merino**.
+
+## Repository layout
+
+```text
 jam-ta-tools/
-├── maya/ta_tools.py       # Maya 2022+ (Python 3)
-├── blender/ta_tools.py    # Blender 2.80+
-└── README.md
+├── Blender/                 # Blender add-on and headless validator
+├── Common/jam_ta_core/      # Shared host-independent Python core
+├── Maya/                    # Maya tools, module file and headless validator
+├── Unity/com.jam.ta-tools/  # Unity 6 editor package
+├── Unreal/JAMTATools/       # Unreal editor validation plugin
+├── docs/                    # Architecture notes
+├── examples/                # Example project profiles and custom rules
+├── tests/                   # Shared-core tests
+└── build_release.py         # Builds installable packages into dist/
 ```
 
-## Features
+## Main features
 
-| Feature | Maya | Blender |
-|---|---|---|
-| Batch rename with prefix + padded numbering | ✅ | ✅ |
-| Poly budget tracking (tris / faces / verts) | ✅ | ✅ |
-| **Engine-vertex estimation** (UV seams, split normals, material splits) | ✅ | ✅ |
-| Automatic LP/HP prefix classification on export | ✅ | ✅ |
-| Pivot / origin placement (axis extremes, midpoint, selection) | ✅ | ✅ |
-| Mesh validation: non-manifold edges & vertices, lamina faces, scale checks | ✅ | ✅ |
-| UV validation: missing UVs, outside 0–1, flipped faces, zero-area faces | ✅ | ✅ |
-| Texel density: check and match (px per world unit) | ✅ | ✅ |
-| Validated FBX export, single or **batch (one file per object, move-to-origin)** | ✅ | ✅ |
-| IK handle + **mathematically placed pole vector** | ✅ | ✅ |
-| Pose-driven muscle helper joint/bone (bicep-style bulge) | ✅ | ✅ |
-| Planar UV projection with island fitting | — | ✅ |
-| Settings persistence across sessions | optionVar | JSON config |
-| Single-undo batch operations | undoInfo chunks | REGISTER/UNDO |
+- Asset Doctor validation profiles with configurable severities and project rules.
+- Mesh checks for topology, transforms, LOD structure and common export problems.
+- Render-vertex split analysis for UV seams, normals and material boundaries.
+- UV layout, overlap, padding, lightmap and texel-density analysis.
+- Material and texture inventory checks, including UDIM and source-reference metadata.
+- Poly budgets and reference mesh-buffer cost estimates.
+- Asset Sets for render meshes, LODs, collision, sockets, skeletons and helpers.
+- Modular-kit grid and bounds validation.
+- Validated FBX/USD export planning with `.jammeta.json` sidecars.
+- Batch export with scene-state restoration.
+- Pivot/origin tools, renaming utilities and rigging helpers.
+- JSON and JUnit report output for command-line or CI validation.
+- Unity and Unreal verification of DCC-side expectations after import.
 
-## Install
+## Installation
+
+The recommended installation path is to download the package for the application you use from **GitHub Releases**. The repository itself is the development source tree.
 
 ### Maya
-1. Copy `maya/ta_tools.py` somewhere Maya can access
-   (e.g. `Documents/maya/scripts`).
-2. In the Script Editor (Python tab):
 
-```python
-import ta_tools as jamta
-jamta.show()
+Download `JAM_TA_Tools_Maya_<version>.zip` and extract its contents into:
+
+```text
+C:\Users\<username>\Documents\maya\modules\
 ```
 
-If the file lives outside Maya's script path, append its folder to
-`sys.path` first.
+The resulting layout should be:
+
+```text
+Documents/maya/modules/
+├── JAMTATools.mod
+└── JAMTATools/
+    ├── README.md
+    └── scripts/
+        ├── ta_tools.py
+        ├── jam_ta_qt.py
+        ├── jam_validate_maya.py
+        └── jam_ta_core/
+```
+
+`JAMTATools.mod` must sit directly inside the `modules` folder. Restart Maya after installation.
+
+Open **Windows > General Editors > Script Editor**, switch to the Python tab, and run:
+
+```python
+import ta_tools
+ta_tools.show()
+```
+
+Maya 2025+ can also open the PySide6 Asset Doctor dashboard directly:
+
+```python
+import jam_ta_qt
+jam_ta_qt.show_dashboard()
+```
+
+A shelf button can use the same `ta_tools.show()` call for one-click access.
 
 ### Blender
-1. Edit > Preferences > Add-ons > Install…
-2. Select `blender/ta_tools.py` and enable **JAM TA Tools**.
-3. The panel appears in the 3D Viewport sidebar (N) under **TA Tools**.
 
-## Usage highlights
+Download `JAM_TA_Tools_Blender_<version>.zip`.
 
-**Engine-vertex estimation.** Raw vertex counts lie: engines split vertices
-at UV seams, hard edges and material boundaries. The `ENGINE` count mode
-builds a set of unique render vertices (position + normal + UVs + optional
-material index) so budgets reflect what the importer will actually produce.
+In Blender 4.2+:
 
-**Validation before export.** Export can be gated on validation: geometry
-checks (non-manifold, lamina, scale) plus optional UV checks. Flipped UVs
-are detected with a signed-area (shoelace) test — mirrored UVs are common
-and legitimate, so UV checks can be toggled off per export. Full UV overlap
-detection is intentionally out of scope: without spatial acceleration it
-does not stay usable on production meshes.
+1. Open **Edit > Preferences > Add-ons**.
+2. Choose **Install from Disk**.
+3. Select the downloaded ZIP.
+4. Enable **JAM TA Tools** if Blender does not enable it automatically.
+5. Open the 3D Viewport sidebar with **N** and select the **TA Tools** tab.
 
-**Batch export.** One FBX per selected object, each optionally moved to the
-world origin for the export and restored afterwards — the standard
-game-asset workflow. Original positions and selection survive even a
-mid-batch failure.
+The release package includes the shared `jam_ta_core` package, so the ZIP should be installed as a complete add-on rather than copying `ta_tools.py` by itself.
 
-**IK + pole vector.** The pole is placed by projecting the chain's middle
-joint onto the start→end axis and taking the rejection vector — the
-component perpendicular to the chain on its bend plane — scaled by chain
-length. In Blender the constraint's `pole_angle` is also computed (signed
-angle of the projected pole axis) so the chain doesn't snap when the pole
-target is assigned.
+### Unity 6
 
-**Muscle helper.** Creates a deform joint/bone halfway along the upper
-limb whose scale is driven by the bend angle — set-driven keys in Maya,
-a clamped scripted driver in Blender:
-`1 + (bulge − 1) · min(|rot| / max_angle, 1)`. Add the helper to the
-skin weights to see the bulge.
+Download `JAM_TA_Tools_Unity_<version>.zip` and extract it. The package is contained in:
 
-**Texel density.** `density = texture_size × √(uv_area / world_area)`,
-area-weighted across the selection. Matching scales each object's UVs
-uniformly around their UV-bounds center.
+```text
+com.jam.ta-tools/
+```
 
-## Design notes
+In Unity, open **Window > Package Manager**, use the **+** menu, choose **Add package from disk...**, and select:
 
-- Batch operations are single-undo: `undoInfo` chunking via decorator in
-  Maya; native `REGISTER`/`UNDO` operator options in Blender.
-- Settings persist between sessions (Maya `optionVar`; Blender JSON in the
-  user config folder via Save/Apply Defaults). Destructive toggles are
-  deliberately excluded and always reset to off.
-- Both files run through strict linting and compile outside their DCC via
-  guarded imports, so they can be syntax-checked in CI.
+```text
+com.jam.ta-tools/package.json
+```
 
-## Roadmap
+The bridge reads `.jammeta.json` files placed next to imported model source files. Use **Tools > JAM TA Tools > Validate Selected Model** to run validation manually on selected models.
 
-- UV overlap detection with spatial hashing
-- Self-intersection detection at pose time
-- Houdini port of the validation suite
+### Unreal Engine
+
+Download `JAM_TA_Tools_Unreal_<version>.zip` and extract the `JAMTATools` folder into the project's plugin directory:
+
+```text
+<Project>/Plugins/JAMTATools/
+```
+
+Restart Unreal Engine and allow the editor to build the plugin if required. The plugin uses Unreal's Data Validation framework to compare imported Static Mesh and Skeletal Mesh data with sibling `.jammeta.json` sidecars.
+
+## Building releases from source
+
+Clone the repository and run:
+
+```bash
+python build_release.py
+```
+
+The script creates `dist/` and builds:
+
+```text
+JAM_TA_Tools_Blender_<version>.zip
+JAM_TA_Tools_Maya_<version>.zip
+JAM_TA_Tools_Unity_<version>.zip
+JAM_TA_Tools_Unreal_<version>.zip
+JAM_TA_Tools_V<version>_Source.zip
+```
+
+`dist/` contains release artifacts and does not need to be committed to the source repository.
+
+## Validation and sidecars
+
+Maya and Blender produce the same core report model. Exported assets can include a sibling `.jammeta.json` file containing validation status, mesh metrics, UV and texel-density data, material/texture information, Asset Set structure and export metadata.
+
+The sidecar intentionally stores portable asset information rather than host objects or absolute private texture paths. Unity and Unreal use it as a comparison contract: DCC validation errors can be surfaced in-engine, while representation differences such as imported vertex counts remain visible without silently changing importer settings.
+
+## Project profiles and custom rules
+
+Built-in profiles provide general validation defaults. Project-specific policy can be supplied with JSON profiles, while Python rule modules can register checks that belong to a particular production rather than the base toolkit.
+
+Examples are available in:
+
+```text
+examples/project_profiles.example.json
+examples/project_rules.example.py
+```
+
+## Command-line validation
+
+The Maya and Blender packages include headless validation entry points:
+
+```text
+Maya/jam_validate_maya.py
+Blender/jam_validate_blend.py
+```
+
+They support project profiles, custom rule modules, JSON reports, JUnit output and warning-as-error gates so the same validation rules can be used in local tools and CI.
+
+## Development
+
+Shared-core tests can be run from the repository root with:
+
+```bash
+python -m unittest discover -s tests
+```
+
+For the design and data-flow breakdown, see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## Author
 
-**Juan Abia Merino** — Technical Artist
-[ArtStation](https://juanabiamerino.artstation.com) ·
-[GitHub](https://github.com/J4ck4b14) ·
-[LinkedIn](https://linkedin.com/in/juan-abia-merino)
+**Juan Abia Merino** — Technical Artist  
+[ArtStation](https://juanabiamerino.artstation.com) · [GitHub](https://github.com/J4ck4b14) · [LinkedIn](https://linkedin.com/in/juan-abia-merino)

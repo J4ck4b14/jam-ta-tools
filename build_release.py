@@ -101,7 +101,7 @@ def build_source() -> Path:
                 continue
             if path.suffix in {".pyc", ".zip"}:
                 continue
-            archive_name = (Path("JAM_TA_Tools_V2") / relative).as_posix()
+            archive_name = (Path(f"JAM_TA_Tools_V{VERSION}") / relative).as_posix()
             _write_clean_entry(archive, path, archive_name)
     return output
 

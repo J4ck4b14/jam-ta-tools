@@ -109,7 +109,7 @@ The editor-only plugin derives from `UEditorValidatorBase`. It resolves the Stat
 
 ## Maya UI
 
-The detailed tools are hosted in a `workspaceControl` so the panel can dock and participate in Maya workspaces. `jam_ta_qt.py` adds a compact PySide6 dashboard for Asset Doctor-centric work while retaining the detailed controls rather than prematurely rewriting every mature utility.
+The detailed tools are hosted in a `workspaceControl` so the panel can dock and participate in Maya workspaces. `jam_ta_qt.py` adds a compact PySide6 Asset Doctor dashboard, while the main Maya panel retains the complete utility set.
 
 ## Automation
 

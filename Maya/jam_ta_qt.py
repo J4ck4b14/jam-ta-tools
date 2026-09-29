@@ -1,7 +1,7 @@
 """PySide6 Asset Doctor dashboard for Maya 2025+.
 
-This widget is the production-facing dashboard for inspection, issue drill-down,
-conservative fixes and report export. The full tool shelf exposes specialised utilities.
+Provides selection analysis, issue details, safe fixes and report export.
+The main JAM TA Tools panel remains available for the full utility set.
 """
 
 from __future__ import annotations

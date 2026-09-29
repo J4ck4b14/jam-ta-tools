@@ -3,20 +3,16 @@
 JAM TA Tools for Autodesk Maya
 Author: Juan Abia Merino
 
-JAM TA Tools for game-art workflows in Maya.
-but the suite now includes a shared profile/report core, Asset Doctor analysis
-and detailed render-vertex split attribution alongside renaming, pivots, UVs,
-texel density, multi-format export and rigging helpers.
+Game-asset validation, analysis, export and technical-art utilities for Maya.
+The Maya adapter uses the shared ``jam_ta_core`` package for host-independent
+profiles, reports and asset analysis.
 
-Install/Run:
-    1. Save this file somewhere Maya can access
-       (e.g. your Documents/maya/scripts folder).
-    2. In Maya's Script Editor (Python tab):
+Install the Maya release package as a module, restart Maya, then run:
 
-        import sys
-        sys.path.append(r"path/to/folder/containing/this/file")
-        import ta_tools as jamta
-        jamta.show()
+    import ta_tools
+    ta_tools.show()
+
+See the repository README for the complete module layout and source-build steps.
 """
 
 from __future__ import annotations
